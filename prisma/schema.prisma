@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model SnapchatAccount {
+  id            String     @id @default(cuid())
+  username      String     @unique
+  displayName   String?
+  followerCount String?
+  lastScrapedAt DateTime?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  snaps         SnapLink[]
+}
+
+model SnapLink {
+  id            String    @id @default(cuid())
+  accountId     String
+  snapId        String?
+  source        String    @default("currentStory")
+  snapIndex     Int?
+  timestampSec  Int?
+  isoDate       String?
+  expiresAtSec  Int?
+  mediaType     String
+  originalUrl   String    @unique
+  previewUrl    String?
+  localPath     String?
+  fileSize      Int       @default(0)
+  downloadedAt  DateTime?
+  fileDeletedAt DateTime?
+  createdAt     DateTime  @default(now())
+
+  account SnapchatAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@index([accountId])
+  @@index([isoDate])
+  @@index([expiresAtSec])
+  @@index([source])
+  @@index([accountId, isoDate, snapIndex])
+}
+
+model TiktokLink {
+  id          String   @id @default(cuid())
+  sourceUrl   String   @unique
+  videoId     String?
+  kind        String   @default("video")
+  author      String?
+  description String?
+  coverUrl    String?
+  downloadUrl String?
+  qualityLabel String?
+  fileSize    Int?
+  codec       String?
+  extractedAt DateTime?
+  createdAt   DateTime @default(now())
+
+  @@index([videoId])
+  @@index([author])
+  @@index([createdAt])
+}

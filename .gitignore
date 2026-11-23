@@ -1,0 +1,9 @@
+node_modules/
+.next/
+.env
+db/
+public/saved/
+dev.log
+.zscripts/dev.log
+.zscripts/*.log
+*.db
